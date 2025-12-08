@@ -11,13 +11,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Generate Documentation
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 'latest-stable'
+    
+    - name: Build Documentation
       run: |
-        swift package generate-documentation \
-          --target Navigable \
-          --output-path ./docs \
-          --transform-for-static-hosting \
-          --hosting-base-path Navigable-SwiftUI
+        xcodebuild docbuild \
+          -scheme Navigable \
+          -derivedDataPath ./derivedData \
+          -destination 'platform=macOS'
+        
+        # Find and copy the documentation
+        find ./derivedData -name "*.doccarchive" -exec cp -R {} ./docs \;
+        
+        # Transform for static hosting
+        $(xcrun --find docc) process-archive \
+          transform-for-static-hosting ./docs/*.doccarchive \
+          --hosting-base-path Navigable-SwiftUI \
+          --output-path ./docs
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
