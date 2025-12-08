@@ -4,25 +4,53 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  deploy-docs:
+  deploy:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v3
     
-    - name: Create Documentation Page
+    - name: Create Documentation Site
       run: |
-        mkdir -p docs
-        cp README.md docs/index.md
-        cat > docs/_config.yml << 'EOF'
-        theme: jekyll-theme-minimal
-        title: Navigable
-        description: A SwiftUI Navigation Framework
+        mkdir -p _site
+        # Convert README to HTML
+        cat > _site/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Navigable - SwiftUI Navigation Framework</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+                       max-width: 980px; margin: 0 auto; padding: 20px; }
+                code { background: #f6f8fa; padding: 2px 5px; border-radius: 3px; }
+                pre { background: #f6f8fa; padding: 16px; border-radius: 6px; overflow-x: auto; }
+            </style>
+        </head>
+        <body>
+            <h1>Navigable</h1>
+            <p>A powerful and flexible navigation framework for SwiftUI applications.</p>
+            <h2>Installation</h2>
+            <p>Add Navigable to your project using Swift Package Manager.</p>
+            <h2>Documentation</h2>
+            <p>Full documentation coming soon. For now, check out the <a href="https://github.com/coreyd303/Navigable-SwiftUI">GitHub repository</a>.</p>
+        </body>
+        </html>
         EOF
     
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
+        path: '_site'
+    
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v2
