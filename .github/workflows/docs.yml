@@ -6,31 +6,20 @@ on:
 
 jobs:
   deploy-docs:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v3
     
-    - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: 'latest-stable'
-    
-    - name: Build Documentation
+    - name: Create Documentation Page
       run: |
-        xcodebuild docbuild \
-          -scheme Navigable \
-          -derivedDataPath ./derivedData \
-          -destination 'platform=macOS'
-        
-        # Find and copy the documentation
-        find ./derivedData -name "*.doccarchive" -exec cp -R {} ./docs \;
-        
-        # Transform for static hosting
-        $(xcrun --find docc) process-archive \
-          transform-for-static-hosting ./docs/*.doccarchive \
-          --hosting-base-path Navigable-SwiftUI \
-          --output-path ./docs
+        mkdir -p docs
+        cp README.md docs/index.md
+        cat > docs/_config.yml << 'EOF'
+        theme: jekyll-theme-minimal
+        title: Navigable
+        description: A SwiftUI Navigation Framework
+        EOF
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
