@@ -1,0 +1,26 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-docs:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Generate Documentation
+      run: |
+        swift package generate-documentation \
+          --target Navigable \
+          --output-path ./docs \
+          --transform-for-static-hosting \
+          --hosting-base-path Navigable-SwiftUI
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
