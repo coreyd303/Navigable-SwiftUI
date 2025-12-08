@@ -48,7 +48,7 @@ targets: [
 
 ## Documentation
 
-Navigables's detailed documentation in Sources/Navigable/Navigable.docc as a Documentation Catalog. You can easily browse it quick.github.io/Navigable.
+Navigable's detailed documentation in Sources/Navigable/Navigable.docc as a Documentation Catalog. You can easily browse it at https://coreyd303.github.io/Navigable-SwiftUI.
 
 ---
 
