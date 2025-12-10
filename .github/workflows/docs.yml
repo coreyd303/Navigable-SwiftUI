@@ -3,56 +3,51 @@ name: Docs
 on:
   push:
     branches:
-    - main
+      - main
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
   docs:
-    runs-on: ubuntu-22.04   # Use a stable supported Ubuntu version
+    runs-on: ubuntu-22.04   # supported Linux version
 
     steps:
-    - uses: actions/checkout@v4
+      # 1️⃣ Checkout
+      - uses: actions/checkout@v4
 
-    - name: Set up Pages
-      uses: actions/configure-pages@v5
+      # 2️⃣ Configure Pages
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
 
-    - name: Set up Swift
-      uses: swift-actions/setup-swift@v1
-      with:
-        swift-version: '5.9'
+      # 3️⃣ Generate DocC docs (Swift installation handled internally)
+      - name: Generate Docs
+        uses: fwcd/swift-docc-action@v1
+        with:
+          target: Navigable
+          output: ./public
+          transform-for-static-hosting: 'true'
+          disable-indexing: 'true'
+          hosting-base-path: navigable-swiftui
 
-    - name: Generate Docs
-      uses: fwcd/swift-docc-action@v1
-      with:
-        target: Navigable
-        output: ./public
-        transform-for-static-hosting: 'true'
-        disable-indexing: 'true'
-        hosting-base-path: navigable-swiftui
-
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./public
+      # 4️⃣ Upload artifact for Pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
 
   deploy:
     needs: docs
     runs-on: ubuntu-22.04
     environment:
       name: github-pages
-      # page_url output is automatically handled in deploy step
-
     steps:
-    - name: Deploy Docs
-      uses: actions/deploy-pages@v4
+      - name: Deploy Docs
+        uses: actions/deploy-pages@v4
