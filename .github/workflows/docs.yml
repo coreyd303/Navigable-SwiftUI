@@ -1,10 +1,8 @@
-name: Docs
+name: DocC Runner
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -16,38 +14,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  docs:
-    runs-on: macos-latest   # macOS needed for SwiftUI support
-
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: macos-14
     steps:
-      # 1️⃣ Checkout the repository
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # 2️⃣ Configure GitHub Pages
-      - name: Set up Pages
-        uses: actions/configure-pages@v5
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
-      # 3️⃣ Generate DocC docs
-      - name: Generate Docs
-        uses: fwcd/swift-docc-action@v1
+      - name: Select Xcode 15.1
+        uses: maxim-lobanov/setup-xcode@v1
         with:
-          target: Navigable             # Your main target
-          output: ./public             # Output folder for GitHub Pages
-          transform-for-static-hosting: 'true'
-          disable-indexing: 'true'
-          hosting-base-path: navigable-swiftui
+          xcode-version: '15.1.0'
 
-      # 4️⃣ Upload generated docs as Pages artifact
+      - name: Build DocC
+        run: |
+          swift package resolve
+
+          xcodebuild docbuild -scheme Navigable -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS'
+
+          DOCC=$(xcrun --find docc)
+          $DOCC process-archive \
+            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/Navigable.doccarchive \
+            --output-path docs \
+            --hosting-base-path 'navigable-swiftui'
+
+          echo "<script>window.location.href += \"/documentation/navigable-swiftui\"</script>" > docs/index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: 'docs'
 
-  deploy:
-    needs: docs
-    runs-on: macos-latest
-    environment:
-      name: github-pages
-    steps:
-      - name: Deploy Docs to GitHub Pages
+      - id: deployment
+        name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
