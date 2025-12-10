@@ -222,7 +222,7 @@ open class Navigable: NavigableBase {
     ///   - delay: TimeInterval to delay execution by, defaults to 6/10ths of a second
     public func enqueue(
         navigation action: @escaping () -> Void,
-        after delay: TimeInterval = 0.6
+        after delay: TimeInterval = 0
     ) {
         if navigationState != nil {
             dismissPresentationOrDisplay()
