@@ -2,7 +2,7 @@ name: Deploy Documentation
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]  # trigger on main branch
 
 permissions:
   contents: read
@@ -13,30 +13,39 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
+      name: github-pages  # environment for Pages deployment
 
     steps:
+      # 1️⃣ Checkout code
       - uses: actions/checkout@v4
 
+      # 2️⃣ Setup Swift
       - name: Setup Swift
-        uses: fwal/setup-swift@v2
+        uses: actions/setup-swift@v1
         with:
-          swift-version: '5.9'   # or the Swift version you use
+          swift-version: '5.9.3'   # Use the latest Swift version you need
 
-      - name: Build Documentation with DocC
+      # 3️⃣ Resolve Swift packages
+      - name: Resolve Swift packages
+        run: swift package resolve
+
+      # 4️⃣ Build DocC documentation
+      - name: Build DocC documentation
         run: |
-          swift package resolve
           swift docc convert Sources/Navigable/Navigation.docc \
             --output-path _site \
-            --hosting-base-path Navigable-SwiftUI
+            --hosting-base-path /   # optional: clean URL at root of repo Pages
 
+      # 5️⃣ Configure Pages
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Pages Artifact
+      # 6️⃣ Upload the documentation site artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '_site'
 
+      # 7️⃣ Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
