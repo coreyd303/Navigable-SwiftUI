@@ -43,12 +43,15 @@ targets: [
     )
 ]
 ```
+---
+
+## Documentation
+
+Navigable's detailed documentation is bundled in the project, you can view it locally by cloning the repo and building via Xcode `Product >> Build Documentation`
 
 ---
 
 ## Quick Start
-
-**View detailed implementation documenation:** [here](https://github.com/coreyd303/Navigable-SwiftUI/blob/main/Sources/Navigable/Navigation.docc/Navigation.md)
 
 ```swift
 import SwiftUI
