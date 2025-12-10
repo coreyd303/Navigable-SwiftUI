@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   docs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04   # Use a stable supported Ubuntu version
 
     steps:
     - uses: actions/checkout@v4
