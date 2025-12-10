@@ -12,6 +12,10 @@ let package = Package(
             targets: ["Navigable"]
         ),
     ],
+    dependencies: [
+        // Add DocC plugin
+        .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.0.0")
+    ],
     targets: [
         // Internal helpers (NOT exposed as a product)
         .target(

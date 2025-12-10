@@ -1,51 +1,54 @@
-name: Deploy Documentation
+name: Docs
 
 on:
   push:
-    branches: [ main ]  # Trigger on pushes to main
+    branches:
+    - main
+  workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
-  deploy:
-    runs-on: ubuntu-22.04   # Use supported Ubuntu version
-    environment:
-      name: github-pages  # Required for Pages deployment
+  docs:
+    runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
+    - name: Set up Pages
+      uses: actions/configure-pages@v1
+    - name: Set up Swift
+      uses: swift-actions/setup-swift@v1
+      with:
+        swift-version: '5.7'
+    - name: Generate Docs
+      uses: fwcd/swift-docc-action@v1
+      with:
+        target: LighthouseClient
+        output: ./public
+        transform-for-static-hosting: 'true'
+        disable-indexing: 'true'
+        hosting-base-path: lighthouse-swift
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: ./public
 
-      # 2️⃣ Setup Swift
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v1
-        with:
-          swift-version: '5.9.3'   # Adjust to your Swift version
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: docs
 
-      # 3️⃣ Resolve Swift packages
-      - name: Resolve Swift packages
-        run: swift package resolve
-
-      # 4️⃣ Build DocC documentation
-      - name: Build DocC documentation
-        run: |
-          swift docc convert Sources/Navigable/Navigation.docc \
-            --output-path _site \
-            --hosting-base-path /   # Clean URL at root of Pages
-
-      # 5️⃣ Configure GitHub Pages
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      # 6️⃣ Upload the documentation artifact
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '_site'
-
-      # 7️⃣ Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+    steps:
+    - name: Deploy Docs
+      uses: actions/deploy-pages@v1
