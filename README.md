@@ -48,6 +48,8 @@ targets: [
 
 ## Quick Start
 
+**View detailed implementation documenation:** [here](https://github.com/coreyd303/Navigable-SwiftUI/blob/main/Sources/Navigable/Navigation.docc/Navigation.md)
+
 ```swift
 import SwiftUI
 import Navigable
