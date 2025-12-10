@@ -17,27 +17,27 @@ concurrency:
 
 jobs:
   docs:
-    runs-on: ubuntu-22.04   # supported Linux version
+    runs-on: macos-latest   # macOS needed for SwiftUI support
 
     steps:
-      # 1️⃣ Checkout
+      # 1️⃣ Checkout the repository
       - uses: actions/checkout@v4
 
-      # 2️⃣ Configure Pages
+      # 2️⃣ Configure GitHub Pages
       - name: Set up Pages
         uses: actions/configure-pages@v5
 
-      # 3️⃣ Generate DocC docs (Swift installation handled internally)
+      # 3️⃣ Generate DocC docs
       - name: Generate Docs
         uses: fwcd/swift-docc-action@v1
         with:
-          target: Navigable
-          output: ./public
+          target: Navigable             # Your main target
+          output: ./public             # Output folder for GitHub Pages
           transform-for-static-hosting: 'true'
           disable-indexing: 'true'
           hosting-base-path: navigable-swiftui
 
-      # 4️⃣ Upload artifact for Pages
+      # 4️⃣ Upload generated docs as Pages artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -45,9 +45,9 @@ jobs:
 
   deploy:
     needs: docs
-    runs-on: ubuntu-22.04
+    runs-on: macos-latest
     environment:
       name: github-pages
     steps:
-      - name: Deploy Docs
+      - name: Deploy Docs to GitHub Pages
         uses: actions/deploy-pages@v4
