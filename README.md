@@ -48,6 +48,7 @@ targets: [
 ## Documentation
 
 Navigable's detailed documentation is bundled in the project, you can view it locally by cloning the repo and building via Xcode `Product >> Build Documentation`
+or view online [here](https://github.com/coreyd303/Navigable-SwiftUI/tree/main/Sources/Navigable/Navigation.docc)
 
 ---
 
