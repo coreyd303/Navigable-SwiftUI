@@ -32,7 +32,12 @@ provider object in conjunction with a view.
 ---
 
 ### 💡 This example demonstrates how to use `applyNavigation` with either `ViewModel` that conform to `Navigable`, or a view that conforms to `NavigableView`.
-- To see this in action checkout the demo app at `*/Sources/NavigationSample` in the `HatchNavigation` module!
+- To see this in action, check out the demo app in the [`Example/NavigableSampleApp`](https://github.com/coreyd303/Navigable-SwiftUI/tree/main/Example/NavigableSampleApp) folder!
+
+**Run the Example:**
+1. Clone this repository
+2. Open `Example/NavigableSampleApp/NavigableSampleApp.xcodeproj`
+3. Build and run to see Navigable in action!
 
 In `Views` that leverage a `ViewModel`:  
 - `@State var viewModel` drives the navigation state.
