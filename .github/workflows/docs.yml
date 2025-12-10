@@ -1,4 +1,4 @@
-name: DocC Runner
+name: DocC Deployment
 
 on:
   push:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: macos-14  # macOS runner needed for SwiftUI and DocC
+    runs-on: macos-14   # macOS runner required for SwiftUI + DocC
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -36,31 +36,38 @@ jobs:
         with:
           xcode-version: '15.1.0'
 
-      # 4️⃣ Resolve Swift package dependencies
+      # 4️⃣ Verify Swift version
+      - name: Verify Swift
+        run: swift --version
+
+      # 5️⃣ Resolve Swift package dependencies
       - name: Resolve Swift Package
         run: swift package resolve
 
-      # 5️⃣ Build DocC archive
+      # 6️⃣ Build DocC documentation
       - name: Build DocC
         run: |
-          xcodebuild docbuild -scheme Navigable -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS'
-          
+          xcodebuild docbuild \
+            -scheme Navigable \
+            -derivedDataPath /tmp/docbuild \
+            -destination 'generic/platform=iOS'
+
           DOCC=$(xcrun --find docc)
           $DOCC process-archive \
             transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/Navigable.doccarchive \
             --output-path docs \
             --hosting-base-path 'navigable-swiftui'
 
-          # Optional redirect to the documentation folder
+          # Optional redirect to documentation folder
           echo "<script>window.location.href += '/documentation/navigable-swiftui'</script>" > docs/index.html
 
-      # 6️⃣ Upload the generated site to GitHub Pages
+      # 7️⃣ Upload artifact to GitHub Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'docs'
 
-      # 7️⃣ Deploy to GitHub Pages
+      # 8️⃣ Deploy to GitHub Pages
       - id: deployment
         name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
