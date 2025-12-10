@@ -6,3 +6,16 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+.DS_Store
+Example/NavigableSampleApp/NavigableSampleApp.xcodeproj/xcuserdata/
+Example/NavigableSampleApp/NavigableSampleApp.xcodeproj/project.xcworkspace/xcuserdata/
+Example/NavigableSampleApp/NavigableSampleApp.xcodeproj/project.pbxproj
+Example/**/*.xcodeproj/xcuserdata/
+Example/**/*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcscheme
+xcschememanagement.plist
+*.xcworkspace/xcshareddata/
+DerivedData/
+*.playground/playground.xcworkspace/
+.swiftpm/
