@@ -2,7 +2,7 @@ name: Deploy Documentation
 
 on:
   push:
-    branches: [ main ]  # trigger on main branch
+    branches: [ main ]  # Trigger on pushes to main
 
 permissions:
   contents: read
@@ -13,7 +13,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
-      name: github-pages  # environment for Pages deployment
+      name: github-pages  # Required for Pages deployment
 
     steps:
       # 1️⃣ Checkout code
@@ -21,9 +21,9 @@ jobs:
 
       # 2️⃣ Setup Swift
       - name: Setup Swift
-        uses: actions/setup-swift@v1
+        uses: swift-actions/setup-swift@v1
         with:
-          swift-version: '5.9.3'   # Use the latest Swift version you need
+          swift-version: '5.9.3'   # Adjust to the Swift version your package requires
 
       # 3️⃣ Resolve Swift packages
       - name: Resolve Swift packages
@@ -34,13 +34,13 @@ jobs:
         run: |
           swift docc convert Sources/Navigable/Navigation.docc \
             --output-path _site \
-            --hosting-base-path /   # optional: clean URL at root of repo Pages
+            --hosting-base-path /   # Clean URL at root of Pages
 
-      # 5️⃣ Configure Pages
+      # 5️⃣ Configure GitHub Pages
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      # 6️⃣ Upload the documentation site artifact
+      # 6️⃣ Upload the documentation artifact
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
