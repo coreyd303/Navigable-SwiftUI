@@ -57,7 +57,7 @@ In `Views` that leverage a `ViewModel`:
 - `swap(_ route: any Routable)` : replace the last route on the stack with a new route
 - `present(_ fullScreenCover: any Coverable)` : present a full screen cover
 - `present(_ sheet: any Sheetable)` : present a sheet
-- `display(_ alert: AnyAlert)` : display an alert, this supports both `SwiftUI Alert` and `HatchAlert`
+- `display(_ alert: AnyAlert)` : display an alert
 - `display(_ dialog: AnyConfirmationDialog)` : display a confirmation dialog
 - `enqueue(navigation action: after delay:)` : 
     - When changing presentation or display on a `View`, ie: swapping from one Sheet to another, `SwiftUI` can find itself in a bit of a `nil` state conflict due to the async nature of `View`.
