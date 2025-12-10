@@ -16,13 +16,13 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: macos-14   # macOS runner required for SwiftUI + DocC
+    runs-on: macos-14   # macOS required for SwiftUI and Swift 6.1
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -36,38 +36,27 @@ jobs:
         with:
           xcode-version: '15.1.0'
 
-      # 4️⃣ Verify Swift version
+      # 4️⃣ Verify Swift version (optional)
       - name: Verify Swift
         run: swift --version
 
-      # 5️⃣ Resolve Swift package dependencies
-      - name: Resolve Swift Package
-        run: swift package resolve
+      # 5️⃣ Generate DocC documentation
+      - name: Generate Docs
+        uses: fwcd/swift-docc-action@v1
+        with:
+          target: Navigable
+          output: ./docs
+          transform-for-static-hosting: 'true'
+          disable-indexing: 'true'
+          hosting-base-path: navigable-swiftui
 
-      # 6️⃣ Build DocC documentation
-      - name: Build DocC
-        run: |
-          xcodebuild docbuild \
-            -scheme Navigable \
-            -derivedDataPath /tmp/docbuild \
-            -destination 'generic/platform=iOS'
-
-          DOCC=$(xcrun --find docc)
-          $DOCC process-archive \
-            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/Navigable.doccarchive \
-            --output-path docs \
-            --hosting-base-path 'navigable-swiftui'
-
-          # Optional redirect to documentation folder
-          echo "<script>window.location.href += '/documentation/navigable-swiftui'</script>" > docs/index.html
-
-      # 7️⃣ Upload artifact to GitHub Pages
-      - name: Upload artifact
+      # 6️⃣ Upload artifact to GitHub Pages
+      - name: Upload Docs Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs'
+          path: ./docs
 
-      # 8️⃣ Deploy to GitHub Pages
+      # 7️⃣ Deploy to GitHub Pages
       - id: deployment
         name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
