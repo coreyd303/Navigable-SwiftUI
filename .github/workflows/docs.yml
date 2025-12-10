@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04   # Use supported Ubuntu version
     environment:
       name: github-pages  # Required for Pages deployment
 
@@ -23,7 +23,7 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v1
         with:
-          swift-version: '5.9.3'   # Adjust to the Swift version your package requires
+          swift-version: '5.9.3'   # Adjust to your Swift version
 
       # 3️⃣ Resolve Swift packages
       - name: Resolve Swift packages
